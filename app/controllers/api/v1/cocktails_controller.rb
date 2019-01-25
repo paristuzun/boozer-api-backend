@@ -1,8 +1,19 @@
 module Api
   module V1
     class CocktailsController < ApplicationController
+      # before_action :authenticate!, only: [:create]
+
       def index
         render json: Cocktail.all
+      end
+
+      def create
+        @cocktail = Cocktail.new(cocktail_params)
+        if @cocktail.save
+          render json: @cocktail, status: :created
+        else
+          render json: { errors: @cocktail.errors.full_messages }
+        end
       end
 
       def show
@@ -40,6 +51,11 @@ module Api
 
       def destroy
 
+      end
+
+      private
+      def cocktail_params
+        params.require(:cocktail).permit(:name, :description, :instructions, :source)
       end
     end
   end
